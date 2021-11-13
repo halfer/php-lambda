@@ -21,4 +21,4 @@ COPY runtime /var/runtime
 COPY src /var/task/
 
 # Entrypoint
-CMD ["index"]
+CMD ["php", "/var/runtime/bootstrap"]
