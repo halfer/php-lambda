@@ -1,0 +1,8 @@
+# Ignore IDE
+.idea
+
+# Ignore Composer binary
+composer.phar
+
+# Ignore deps
+vendor/
