@@ -3,7 +3,7 @@
 # See example:
 # https://github.com/aws-samples/php-examples-for-aws-lambda/blob/master/0.7-PHP-Lambda-functions-with-Docker-container-images/Dockerfile
 
-FROM php:8.0-cli-alpine
+FROM php:8.0-cli-alpine AS builder
 
 WORKDIR /root
 
@@ -14,9 +14,12 @@ RUN php /root/composer.phar --version
 
 # Install Composer deps
 COPY composer.json composer.lock /root/
+RUN php /root/composer.phar install
+
+FROM php:8.0-cli-alpine
+
 # Move deps to /opt, /root has significant permission issues
-RUN php /root/composer.phar install && \
-    mv /root/vendor /opt/vendor
+COPY --from=builder /root/vendor /opt/vendor
 
 # Install runtimes
 COPY runtime/bootstrap /var/runtime/
