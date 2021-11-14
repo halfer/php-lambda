@@ -27,9 +27,11 @@ COPY src/index.php /var/task/
 #RUN find /var -type d -exec chmod 755 {} +
 #RUN find /usr -type d -exec chmod 755 {} +
 
-RUN chmod 744 /var/task/*
+RUN mv /usr/local/bin/php /var/task/
+
+RUN chmod 777 /var/task/*
 
 # Entrypoint
 WORKDIR /var/task
 ENTRYPOINT []
-CMD ["bootstrap"]
+CMD ["/var/task/php", "/var/task/bootstrap"]
