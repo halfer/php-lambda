@@ -3,9 +3,15 @@
 # See example:
 # https://github.com/aws-samples/php-examples-for-aws-lambda/blob/master/0.7-PHP-Lambda-functions-with-Docker-container-images/Dockerfile
 
-FROM php:8.0-cli-alpine
+FROM php:8.0-cli-bullseye
 
 WORKDIR /root
+
+# Refresh OS
+RUN apt update && apt upgrade -y
+
+# Install Composer requirements
+RUN apt install -y unzip
 
 # Install Composer
 COPY bin bin
@@ -19,7 +25,7 @@ RUN php /root/composer.phar install && \
     mv /root/vendor /opt/vendor
 
 # Install runtimes
-COPY runtime/bootstrap /var/task/
+COPY runtime/bootstrap /var/runtime/
 COPY src/index.php /var/task/
 
 RUN find /var -type f -exec chmod 644 {} +
@@ -32,4 +38,4 @@ RUN find /usr -type d -exec chmod 755 {} +
 # Maybe I just need to avoid Alpine
 
 # Entrypoint
-CMD ["php", "/var/runtime/bootstrap"]
+CMD ["/var/runtime/bootstrap"]

@@ -1,3 +1,4 @@
+#!/usr/local/bin/php
 <?php
 
 // This invokes Composer's autoloader so that we'll be able to use Guzzle and any other 3rd party libraries we need.
