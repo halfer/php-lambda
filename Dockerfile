@@ -14,9 +14,7 @@ RUN php /root/composer.phar --version
 
 # Install Composer deps
 COPY composer.json composer.lock /root/
-# Move deps to /opt, /root seems to have permission issues
-RUN php /root/composer.phar install && \
-    mv /root/vendor /opt/vendor
+RUN php /root/composer.phar install
 
 # Install runtimes
 COPY runtime/bootstrap /var/runtime/
@@ -24,7 +22,8 @@ COPY src/index.php /var/task/
 
 RUN chmod 777 /usr/local/bin/php /var/task/* /var/runtime/*
 
-# Entrypoint
+# The entrypoint seems to be the main handler
+# and the CMD specifies what kind of event to process
 WORKDIR /var/task
 ENTRYPOINT ["/var/runtime/bootstrap"]
 CMD ["index"]
