@@ -14,7 +14,9 @@ RUN php /root/composer.phar --version
 
 # Install Composer deps
 COPY composer.json composer.lock /root/
-RUN php /root/composer.phar install
+# Move deps to /opt, /root has significant permission issues
+RUN php /root/composer.phar install && \
+    mv /root/vendor /opt/vendor
 
 # Install runtimes
 COPY runtime/bootstrap /var/runtime/
