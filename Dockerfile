@@ -19,19 +19,12 @@ RUN php /root/composer.phar install && \
     mv /root/vendor /opt/vendor
 
 # Install runtimes
-COPY runtime/bootstrap /var/task/
+COPY runtime/bootstrap /var/runtime/
 COPY src/index.php /var/task/
 
-#RUN find /var -type f -exec chmod 644 {} +
-#RUN find /usr -type f -exec chmod 744 {} +
-#RUN find /var -type d -exec chmod 755 {} +
-#RUN find /usr -type d -exec chmod 755 {} +
-
-RUN mv /usr/local/bin/php /var/task/
-
-RUN chmod 777 /var/task/*
+RUN chmod 777 /usr/local/bin/php /var/task/* /var/runtime/*
 
 # Entrypoint
 WORKDIR /var/task
-ENTRYPOINT []
-CMD ["/var/task/php", "/var/task/bootstrap"]
+ENTRYPOINT ["/var/runtime/bootstrap"]
+CMD ["index"]
