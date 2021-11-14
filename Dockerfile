@@ -16,7 +16,11 @@ RUN php /root/composer.phar --version
 COPY composer.json composer.lock /root/
 RUN php /root/composer.phar install
 
+# Here's the run-time build (minus Composer)
 FROM php:8.0-cli-alpine
+
+# Update operating system
+RUN apk update && apk upgrade
 
 # Move deps to /opt, /root has significant permission issues
 COPY --from=builder /root/vendor /opt/vendor
