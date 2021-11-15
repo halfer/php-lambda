@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-class LambdaConfigTest extends TestCase
+class StoreTest extends TestCase
 {
     public function testSetTaskName()
     {
