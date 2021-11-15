@@ -14,7 +14,7 @@ RUN php /root/composer.phar --version
 
 # Install Composer deps
 COPY composer.json composer.lock /root/
-RUN php /root/composer.phar install
+RUN php /root/composer.phar install --no-dev
 
 # Here's the run-time build (minus Composer)
 FROM php:8.0-cli-alpine
