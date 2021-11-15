@@ -1,0 +1,82 @@
+START RequestId: 14fb7759-a1b3-40a5-81ae-564371ccddbc Version: $LATEST
+
+** Lambda headers:
+Array
+(
+  [Content-Type] => Array
+  (
+    [0] => application/json
+  )
+  [Lambda-Runtime-Aws-Request-Id] => Array
+  (
+    [0] => 14fb7759-a1b3-40a5-81ae-564371ccddbc
+  )
+  [Lambda-Runtime-Deadline-Ms] => Array
+  (
+    [0] => 1636929674612
+  )
+  [Lambda-Runtime-Invoked-Function-Arn] => Array
+  (
+    [0] => arn:aws:lambda:eu-west-2:361181165171:function:ListenerTest
+  )
+  [Lambda-Runtime-Trace-Id] => Array
+  (
+    [0] => Root=1-61919086-1ff436e71acdb4195415d8e5;Parent=21cbf0f14c305c10;Sampled=0
+  )
+  [Date] => Array
+  (
+    [0] => Sun, 14 Nov 2021 22:41:11 GMT
+  )
+  [Content-Length] => Array
+  (
+    [0] => 43
+  )
+)
+
+** Lambda body:
+Array
+(
+  [queryStringParameters] => Array
+  (
+    [name] => halfer
+  )
+)
+
+** Environment:
+Array
+(
+  [PHP_LDFLAGS] => -Wl,-O1 -pie
+  [AWS_LAMBDA_FUNCTION_MEMORY_SIZE] => 128
+  [AWS_LAMBDA_FUNCTION_VERSION] => $LATEST
+  [AWS_XRAY_CONTEXT_MISSING] => LOG_ERROR
+  [PATH] => /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  [_AWS_XRAY_DAEMON_ADDRESS] => 169.254.79.129
+  [GPG_KEYS] => {redacted}
+  [AWS_LAMBDA_RUNTIME_API] => 127.0.0.1:9001
+  [AWS_REGION] => eu-west-2
+  [PHP_SHA256] => a501017b3b0fd3023223ea25d98e87369b782f8a82310c4033d7ea6a989fea0a
+  [_HANDLER] => index
+  [AWS_LAMBDA_LOG_GROUP_NAME] => /aws/lambda/ListenerTest
+  [PHP_VERSION] => 8.0.12
+  [LAMBDA_TASK_ROOT] => /var/task
+  [AWS_LAMBDA_FUNCTION_NAME] => ListenerTest
+  [PHP_INI_DIR] => /usr/local/etc/php
+  [PHP_ASC_URL] => https://www.php.net/distributions/php-8.0.12.tar.xz.asc
+  [LAMBDA_RUNTIME_DIR] => /var/runtime
+  [AWS_EXECUTION_ENV] => AWS_Lambda_Image
+  [AWS_LAMBDA_LOG_STREAM_NAME] => 2021/11/14/[$LATEST]ec5d364dc1bb4ad5bde2ac11928192c5
+  [PHP_URL] => https://www.php.net/distributions/php-8.0.12.tar.xz
+  [PHP_CPPFLAGS] => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+  [AWS_ACCESS_KEY_ID] => {redacted}
+  [AWS_LAMBDA_INITIALIZATION_TYPE] => on-demand
+  [PHPIZE_DEPS] => autoconf 		dpkg-dev dpkg 		file 		g++ 		gcc 		libc-dev 		make 		pkgconf 		re2c
+  [_AWS_XRAY_DAEMON_PORT] => 2000
+  [PHP_CFLAGS] => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+  [AWS_XRAY_DAEMON_ADDRESS] => 169.254.79.129:2000
+  [AWS_SECRET_ACCESS_KEY] => {redacted}
+  [AWS_SESSION_TOKEN] => {redacted}
+  [AWS_DEFAULT_REGION] => eu-west-2
+)
+
+END RequestId: 14fb7759-a1b3-40a5-81ae-564371ccddbc
+REPORT RequestId: 14fb7759-a1b3-40a5-81ae-564371ccddbc	Duration: 26.66 ms	Billed Duration: 348 ms	Memory Size: 128 MB	Max Memory Used: 28 MB	Init Duration: 320.53 ms	

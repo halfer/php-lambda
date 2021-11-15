@@ -1,0 +1,67 @@
+use GuzzleHttp\Client;
+
+// @todo How to get values in - fluent interface? ctor array?
+class LambdaConfig {
+  protected $taskName; // Set, Get
+  protected $taskPath; // Set, Get
+  protected $lambdaRuntimeApi; // Set, Get
+}
+
+class TaskNotFoundException extends RuntimeException {
+}
+
+/**
+ * Useful class for shared methods
+ */
+abstract class Task {
+  abstract function run(array $payload);
+}
+
+class SpecificTask extends Task {
+}
+
+class TaskLoader {
+  public function __construct(protected string $taskPath) {
+  }
+
+  /**
+   * @returns Task
+   * @throws TaskNotFoundException
+   */
+  public function load(string $taskName) {
+  }
+}
+
+class Lambda {
+  public function __construct(protected Client $client,
+                              protected Task $task,
+                              protected LambdaConfig $config) {
+  }
+
+  public function runProcessingLoop() {
+  }
+
+  protected function getNextRequest() {
+  }
+}
+
+Example bootstrap
+---
+
+use GuzzleHttp\Client;
+
+$client = new Client();
+
+// @todo How to get values in - fluent interface? ctor array?
+$config = new LambdaConfig();
+
+$taskLoader = new TaskLoader($_ENV['LAMBDA_TASK_ROOT']);
+try {
+  $task = $taskLoader->load($_ENV['_HANDLER']);
+} catch (TaskNotFoundException $e {
+  // Handle the error & exit
+}
+
+// Hand control to AWS
+$lambda = new Lambda($client, $task, $config);
+$lambda->runProcessingLoop();

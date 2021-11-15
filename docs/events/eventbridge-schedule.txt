@@ -1,0 +1,91 @@
+START RequestId: 944163f1-4341-43fb-8381-9173baca02e7 Version: $LATEST
+
+** Lambda headers:
+Array
+(
+  [Content-Type] => Array
+  (
+    [0] => application/json
+  )
+  [Lambda-Runtime-Aws-Request-Id] => Array
+  (
+    [0] => 944163f1-4341-43fb-8381-9173baca02e7
+  )
+  [Lambda-Runtime-Deadline-Ms] => Array
+  (
+    [0] => 1636930299752
+  )
+  [Lambda-Runtime-Invoked-Function-Arn] => Array
+  (
+    [0] => arn:aws:lambda:eu-west-2:361181165171:function:ListenerTest
+  )
+  [Lambda-Runtime-Trace-Id] => Array
+  (
+    [0] => Root=1-619192f8-7252c53547764340013b239f;Parent=4f8813e65a8f7f74;Sampled=0
+  )
+  [Date] => Array
+  (
+    [0] => Sun, 14 Nov 2021 22:51:36 GMT
+  )
+  [Content-Length] => Array
+  (
+    [0] => 271
+  )
+)
+
+** Lambda body:
+Array
+(
+  [version] => 0
+  [id] => af42ec5e-1e5a-fddb-f85b-eeffbfc61b5d
+  [detail-type] => Scheduled Event
+  [source] => aws.events
+  [account] => 361181165171
+  [time] => 2021-11-14T22:51:22Z
+  [region] => eu-west-2
+  [resources] => Array
+  (
+    [0] => arn:aws:events:eu-west-2:361181165171:rule/test-timer
+  )
+  [detail] => Array
+  (
+  )
+)
+
+** Environment:
+Array
+(
+  [PHP_LDFLAGS] => -Wl,-O1 -pie
+  [PATH] => /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  [_AWS_XRAY_DAEMON_PORT] => 2000
+  [PHP_VERSION] => 8.0.12
+  [AWS_XRAY_DAEMON_ADDRESS] => 169.254.79.129:2000
+  [AWS_REGION] => eu-west-2
+  [AWS_LAMBDA_FUNCTION_VERSION] => $LATEST
+  [PHP_URL] => https://www.php.net/distributions/php-8.0.12.tar.xz
+  [PHP_ASC_URL] => https://www.php.net/distributions/php-8.0.12.tar.xz.asc
+  [GPG_KEYS] => {redacted}
+  [PHPIZE_DEPS] => autoconf dpkg-dev dpkg file g++ gcc libc-dev make pkgconf re2c
+  [PHP_CFLAGS] => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+  [LAMBDA_RUNTIME_DIR] => /var/runtime
+  [AWS_LAMBDA_FUNCTION_NAME] => ListenerTest
+  [PHP_SHA256] => a501017b3b0fd3023223ea25d98e87369b782f8a82310c4033d7ea6a989fea0a
+  [_AWS_XRAY_DAEMON_ADDRESS] => 169.254.79.129
+  [AWS_LAMBDA_INITIALIZATION_TYPE] => on-demand
+  [AWS_ACCESS_KEY_ID] => {redacted}
+  [AWS_SECRET_ACCESS_KEY] => {redacted}
+  [AWS_DEFAULT_REGION] => eu-west-2
+  [AWS_SESSION_TOKEN] => {redacted}
+  [AWS_LAMBDA_FUNCTION_MEMORY_SIZE] => 128
+  [AWS_XRAY_CONTEXT_MISSING] => LOG_ERROR
+  [PHP_CPPFLAGS] => -fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+  [PHP_INI_DIR] => /usr/local/etc/php
+  [_HANDLER] => index
+  [AWS_EXECUTION_ENV] => AWS_Lambda_Image
+  [AWS_LAMBDA_LOG_STREAM_NAME] => 2021/11/14/[$LATEST]d8c36f65c1154bebb3c47d5a0f4af8be
+  [LAMBDA_TASK_ROOT] => /var/task
+  [AWS_LAMBDA_LOG_GROUP_NAME] => /aws/lambda/ListenerTest
+  [AWS_LAMBDA_RUNTIME_API] => 127.0.0.1:9001
+)
+END RequestId: 944163f1-4341-43fb-8381-9173baca02e7
+REPORT RequestId: 944163f1-4341-43fb-8381-9173baca02e7 Duration: 30.68 ms	Billed Duration: 97 ms	Memory Size: 128 MB	Max Memory Used: 28 MB	Init Duration: 65.37 ms
