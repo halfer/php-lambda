@@ -27,7 +27,7 @@ COPY --from=builder /root/vendor /opt/vendor
 
 # Install runtimes
 COPY runtime/bootstrap /var/runtime/
-COPY src/index.php /var/task/
+COPY task/index.php /var/task/
 
 RUN chmod 777 /usr/local/bin/php /var/task/* /var/runtime/*
 
