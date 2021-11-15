@@ -6,3 +6,6 @@ composer.phar
 
 # Ignore deps
 vendor/
+
+# Test cache
+.phpunit.result.cache
