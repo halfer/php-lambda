@@ -1,8 +1,8 @@
 <?php
 
-namespace ElephpantLambda;
+namespace ElephpantLambda\Config;
 
-class LambdaConfig
+class Store
 {
     protected string $taskName;
     protected string $taskPath;

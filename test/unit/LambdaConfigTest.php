@@ -63,6 +63,6 @@ class LambdaConfigTest extends TestCase
 
     protected function createLambdaConfigInstance()
     {
-        return new \ElephpantLambda\LambdaConfig();
+        return new \ElephpantLambda\Config\Store();
     }
 }
