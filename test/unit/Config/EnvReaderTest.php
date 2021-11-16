@@ -16,9 +16,35 @@ class EnvReaderTest extends TestCase
         $this->assertEquals('localhost', $store->getLambdaRuntimeApi());
     }
 
-    public function testMissingValues()
+    /**
+     * @dataProvider keyDataProvider
+     */
+    public function testMissingValues(string $removeKey)
     {
-        $this->markTestIncomplete();
+        // Remove exactly one key from the example set
+        $exampleEnv = $this->getExampleEnv();
+        unset($exampleEnv[$removeKey]);
+
+        // All run() calls should throw an exception
+        $reader = $this->createEnvReaderInstance();
+        $message = null;
+        try {
+            $reader->run($exampleEnv, $this->createStoreInstance());
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+        }
+
+        // Check that an exception was thrown (and the message is correct)
+        $this->assertEquals("Key `$removeKey` not found", $message);
+    }
+
+    public function keyDataProvider()
+    {
+        return [
+            ['_HANDLER'],
+            ['LAMBDA_TASK_ROOT'],
+            ['AWS_LAMBDA_RUNTIME_API'],
+        ];
     }
 
     protected function getExampleEnv()

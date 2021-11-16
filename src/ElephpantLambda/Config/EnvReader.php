@@ -18,7 +18,7 @@ class EnvReader
     {
         if (!isset($env[$keyName]))
         {
-            throw new \RuntimeException(sprintf('Key `%s` not found'));
+            throw new \RuntimeException(sprintf('Key `%s` not found', $keyName));
         }
 
         return (string) $env[$keyName];
