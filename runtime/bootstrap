@@ -6,32 +6,34 @@ require '/opt/vendor/autoload.php';
 
 use ElephpantLambda\Config\EnvReader;
 use ElephpantLambda\Config\Store as ConfigStore;
+use ElephpantLambda\TaskLoader;
 use GuzzleHttp\Client;
 
 // Read config from env vars
 $envReader = new EnvReader();
 $config = $envReader->run($_ENV, new ConfigStore());
 
+// Load the function specified by the CMD
+$loader = new TaskLoader($config->getTaskPath());
+$handlerFunction = $config->getTaskName();
+$loader->load($handlerFunction);
+
 // This is the request processing loop. Barring unrecoverable failure, this loop runs until the environment shuts down.
 do {
     // Ask the runtime API for a request to handle.
-    $request = getNextRequest();
-
-    // Obtain the function name from the _HANDLER environment variable and ensure the function's code is available.
-    $handlerFunction = $_ENV['_HANDLER'];
-    require_once $_ENV['LAMBDA_TASK_ROOT'] . '/' . $handlerFunction . '.php';
+    $request = getNextRequest($config);
 
     // Execute the desired function and obtain the response.
     $response = $handlerFunction($request['payload']);
 
     // Submit the response back to the runtime API.
-    sendResponse($request['invocationId'], $response);
+    sendResponse($config, $request['invocationId'], $response);
 } while (true);
 
-function getNextRequest()
+function getNextRequest(ConfigStore $config)
 {
     $client = new Client();
-    $response = $client->get('http://' . $_ENV['AWS_LAMBDA_RUNTIME_API'] . '/2018-06-01/runtime/invocation/next');
+    $response = $client->get('http://' . $config->getLambdaRuntimeApi() . '/2018-06-01/runtime/invocation/next');
 
     return [
         'invocationId' => $response->getHeader('Lambda-Runtime-Aws-Request-Id')[0],
@@ -39,11 +41,11 @@ function getNextRequest()
     ];
 }
 
-function sendResponse($invocationId, $response)
+function sendResponse(ConfigStore $config, $invocationId, array $response)
 {
     $client = new Client();
     $client->post(
-        'http://' . $_ENV['AWS_LAMBDA_RUNTIME_API'] . '/2018-06-01/runtime/invocation/' . $invocationId . '/response',
+        'http://' . $config->getLambdaRuntimeApi() . '/2018-06-01/runtime/invocation/' . $invocationId . '/response',
         ['body' => $response]
     );
 }
