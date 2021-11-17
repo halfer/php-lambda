@@ -1,10 +1,16 @@
 #!/usr/local/bin/php
 <?php
 
-// This invokes Composer's autoloader so that we'll be able to use Guzzle and any other 3rd party libraries we need.
+// Load library and own dependencies
 require '/opt/vendor/autoload.php';
 
+use ElephpantLambda\Config\EnvReader;
+use ElephpantLambda\Config\Store as ConfigStore;
 use GuzzleHttp\Client;
+
+// Read config from env vars
+$envReader = new EnvReader();
+$config = $envReader->run($_ENV, new ConfigStore());
 
 // This is the request processing loop. Barring unrecoverable failure, this loop runs until the environment shuts down.
 do {
