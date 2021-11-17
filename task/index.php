@@ -1,12 +1,11 @@
 <?php
 
-//hello function
-function index($data)
+function index($data): string
 {
-    return APIResponse("Hello, ". $data['queryStringParameters']['name']);
+    return APIResponse("Hello, " . $data['queryStringParameters']['name']);
 }
 
-function APIResponse($body)
+function APIResponse($body): string
 {
     $headers = array(
         "Content-Type"=>"application/json",
@@ -14,9 +13,9 @@ function APIResponse($body)
         "Access-Control-Allow-Headers"=>"Content-Type",
         "Access-Control-Allow-Methods" =>"OPTIONS,POST"
     );
-    return json_encode(array(
-        "statusCode"=>200,
-        "headers"=>$headers,
-        "body"=>$body
-    ));
+    return json_encode([
+        "statusCode" => 200,
+        "headers" => $headers,
+        "body" => $body
+    ]);
 }
