@@ -12,6 +12,7 @@ use GuzzleHttp\Client;
 // Read config from env vars
 $envReader = new EnvReader();
 $config = $envReader->run($_ENV, new ConfigStore());
+$runtimeHost = $config->getLambdaRuntimeApi();
 
 // Load the function specified by the CMD
 $loader = new TaskLoader($config->getTaskPath());
@@ -21,19 +22,19 @@ $loader->load($handlerFunction);
 // This is the request processing loop. Barring unrecoverable failure, this loop runs until the environment shuts down.
 do {
     // Ask the runtime API for a request to handle.
-    $request = getNextRequest($config);
+    $request = getNextRequest($runtimeHost);
 
     // Execute the desired function and obtain the response.
     $response = $handlerFunction($request['payload']);
 
     // Submit the response back to the runtime API.
-    sendResponse($config, $request['invocationId'], $response);
+    sendResponse($runtimeHost, $request['invocationId'], $response);
 } while (true);
 
-function getNextRequest(ConfigStore $config): array
+function getNextRequest(string $runtimeHost): array
 {
     $client = new Client();
-    $response = $client->get('http://' . $config->getLambdaRuntimeApi() . '/2018-06-01/runtime/invocation/next');
+    $response = $client->get('http://' . $runtimeHost . '/2018-06-01/runtime/invocation/next');
 
     return [
         'invocationId' => $response->getHeader('Lambda-Runtime-Aws-Request-Id')[0],
@@ -41,11 +42,11 @@ function getNextRequest(ConfigStore $config): array
     ];
 }
 
-function sendResponse(ConfigStore $config, $invocationId, string $response): void
+function sendResponse(string $runtimeHost, $invocationId, string $response): void
 {
     $client = new Client();
     $client->post(
-        'http://' . $config->getLambdaRuntimeApi() . '/2018-06-01/runtime/invocation/' . $invocationId . '/response',
+        'http://' . $runtimeHost . '/2018-06-01/runtime/invocation/' . $invocationId . '/response',
         ['body' => $response]
     );
 }
