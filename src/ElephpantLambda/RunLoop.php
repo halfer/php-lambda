@@ -36,10 +36,20 @@ class RunLoop
 
     }
 
+    /**
+     * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     protected function getNextRequest(): array
     {
-        // Use $this->getRuntimeHost()
-        return [];
+        $response = $this
+            ->getClient()
+            ->get($this->getRuntimeBaseUrl() . '/next');
+
+        return [
+            'invocationId' => $response->getHeader('Lambda-Runtime-Aws-Request-Id')[0],
+            'payload' => json_decode((string) $response->getBody(), true)
+        ];
     }
 
     /**
@@ -49,7 +59,17 @@ class RunLoop
      */
     protected function sendResponse($invocationId, string $response): void
     {
-        // Use $this->getRuntimeHost()
+        $this
+            ->getClient()
+            ->post(
+                $this->getRuntimeBaseUrl() . '/' . $invocationId . '/response',
+                ['body' => $response]
+            );
+    }
+
+    protected function getRuntimeBaseUrl(): string
+    {
+        return 'http://' . $this->getRuntimeHost() . '/2018-06-01/runtime/invocation';
     }
 
     protected function getRuntimeHost(): string
@@ -60,5 +80,10 @@ class RunLoop
     protected function getTaskName(): string
     {
         return ''; // FIXME
+    }
+
+    protected function getClient(): GuzzleClient
+    {
+        return $this->client;
     }
 }
