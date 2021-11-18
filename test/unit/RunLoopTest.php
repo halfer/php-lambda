@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use ElephpantLambda\RunLoop;
 
 class RunLoopTest extends TestCase
 {
@@ -32,5 +33,15 @@ class RunLoopTest extends TestCase
     public function testSendResponseHttpFault()
     {
         $this->markTestIncomplete();
+    }
+
+    protected function getRunLoopInstance(string $runtimeHost, string $taskName)
+    {
+        return new RunLoop($this->getGuzzleMock(), $runtimeHost, $taskName);
+    }
+
+    protected function getGuzzleMock()
+    {
+        // TODO
     }
 }

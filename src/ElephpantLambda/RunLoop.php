@@ -7,19 +7,18 @@ use GuzzleHttp\Client as GuzzleClient;
 class RunLoop
 {
     /**
-     * @todo Shall we add the task name to the param list, or pass ConfigStore?
      * @param GuzzleClient $client
      * @param string $runtimeHost
+     * @param string $taskName
      */
-    public function __construct(protected GuzzleClient $client, protected string $runtimeHost)
+    public function __construct(protected GuzzleClient $client,
+                                protected string $runtimeHost,
+                                protected string $taskName)
     {
     }
 
     /**
      * Runs an infinite processing loop (until the environment is shut down)
-     *
-     * @todo Need to fix the handlerFunction - let's just call a global in the short term
-     * i.e. \myFunction();
      */
     public function runLoop(): void
     {
@@ -28,12 +27,12 @@ class RunLoop
             $request = $this->getNextRequest();
 
             // Execute the desired function and obtain the response
+            $handlerFunction = $this->getTaskName();
             $response = $handlerFunction($request['payload']);
 
             // Submit the response back to the runtime API
             $this->sendResponse($request['invocationId'], $response);
         } while (true);
-
     }
 
     /**
@@ -53,9 +52,10 @@ class RunLoop
     }
 
     /**
-     * @todo What is the type of the invocationId? - string?
      * @param $invocationId
      * @param string $response
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @todo What is the type of the invocationId? - string?
      */
     protected function sendResponse($invocationId, string $response): void
     {
@@ -79,7 +79,7 @@ class RunLoop
 
     protected function getTaskName(): string
     {
-        return ''; // FIXME
+        return $this->taskName;
     }
 
     protected function getClient(): GuzzleClient
