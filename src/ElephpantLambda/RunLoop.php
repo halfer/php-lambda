@@ -6,6 +6,8 @@ use GuzzleHttp\Client as GuzzleClient;
 
 class RunLoop
 {
+    protected bool $infiniteLoop = true;
+
     /**
      * @param GuzzleClient $client
      * @param string $runtimeHost
@@ -32,7 +34,7 @@ class RunLoop
 
             // Submit the response back to the runtime API
             $this->sendResponse($request['invocationId'], $response);
-        } while (true);
+        } while ($this->infiniteLoop);
     }
 
     /**
@@ -65,6 +67,16 @@ class RunLoop
                 $this->getRuntimeBaseUrl() . '/' . $invocationId . '/response',
                 ['body' => $response]
             );
+    }
+
+    /**
+     * Determines whether to loop once or forever (mostly used for testing)
+     *
+     * @param bool $infiniteLoop
+     */
+    public function setInfiniteLoop(bool $infiniteLoop)
+    {
+        $this->infiniteLoop = $infiniteLoop;
     }
 
     protected function getRuntimeBaseUrl(): string

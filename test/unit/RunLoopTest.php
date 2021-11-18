@@ -37,7 +37,10 @@ class RunLoopTest extends TestCase
 
     protected function getRunLoopInstance(string $runtimeHost, string $taskName)
     {
-        return new RunLoop($this->getGuzzleMock(), $runtimeHost, $taskName);
+        $runLoop = new RunLoop($this->getGuzzleMock(), $runtimeHost, $taskName);
+        $runLoop->setInfiniteLoop(false);
+
+        return $runLoop;
     }
 
     protected function getGuzzleMock()
