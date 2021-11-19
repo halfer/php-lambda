@@ -5,3 +5,4 @@ $projectRoot = realpath(__DIR__ . '/..');
 require_once $projectRoot . '/src/ElephpantLambda/Config/Store.php';
 require_once $projectRoot . '/src/ElephpantLambda/Config/EnvReader.php';
 require_once $projectRoot . '/src/ElephpantLambda/TaskLoader.php';
+require_once $projectRoot . '/src/ElephpantLambda/RunLoop.php';
