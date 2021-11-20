@@ -71,6 +71,8 @@ class RunLoop
     }
 
     /**
+     * Fetches a payload from a lambda run request from AWS
+     *
      * @return array
      * @throws \GuzzleHttp\Exception\GuzzleException
      */

@@ -51,11 +51,6 @@ class RunLoopTest extends TestCase
         $runLoop->runLoop();
     }
 
-    public function testRunLoopMissingPayload()
-    {
-        $this->markTestIncomplete();
-    }
-
     public function testRunLoopPayloadNotInJson()
     {
         $runLoop = $this->getRunLoopInstance('localhost', 'index');
@@ -137,8 +132,7 @@ class RunLoopTest extends TestCase
     {
         if (is_null($body)) {
             $body = json_encode([
-                'payload' => 'hello',
-                'invocationId' => '123',
+                'greeting' => 'hello'
             ]);
         }
 
