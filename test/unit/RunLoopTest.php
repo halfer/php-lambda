@@ -35,6 +35,7 @@ class RunLoopTest extends TestCase
         $runLoop = $this->getRunLoopInstance('localhost', 'index');
         $this->setFetchInvocationIdExpectation();
         $this->setFetchBodyExpectation();
+        $this->setFetchBodyCodeExpectation();
         $this->setFetchWorkExpectation();
         $this->setSendResultsExpectation();
         $runLoop->runLoop();
@@ -54,10 +55,11 @@ class RunLoopTest extends TestCase
     public function testRunLoopPayloadNotInJson()
     {
         $runLoop = $this->getRunLoopInstance('localhost', 'index');
-        $this->setFetchInvocationIdExpectation();
+        $this->setFetchInvocationIdExpectation(false, 0);
         $this->setFetchBodyExpectation('hello');
+        $this->setFetchBodyCodeExpectation();
         $this->setFetchWorkExpectation();
-        $this->setSendResultsExpectation();
+        $this->setSendResultsExpectation(0);
         $this->expectException(PayloadNotJsonException::class);
 
         $runLoop->runLoop();
@@ -68,8 +70,9 @@ class RunLoopTest extends TestCase
         $runLoop = $this->getRunLoopInstance('localhost', 'index');
         $this->setFetchInvocationIdExpectation(false);
         $this->setFetchBodyExpectation();
+        $this->setFetchBodyCodeExpectation();
         $this->setFetchWorkExpectation();
-        $this->setSendResultsExpectation();
+        $this->setSendResultsExpectation(0);
         $this->expectException(MissingInvocationIdHeaderException::class);
 
         $runLoop->runLoop();
@@ -78,11 +81,11 @@ class RunLoopTest extends TestCase
     public function testGetRequestHttpFault()
     {
         $runLoop = $this->getRunLoopInstance('localhost', 'index');
-        $this->setFetchInvocationIdExpectation(false);
-        // FIXME this should fail, since getBody is not called
-        $this->setFetchBodyExpectation('', 500);
+        $this->setFetchInvocationIdExpectation(false, 0);
+        //$this->setFetchBodyExpectation('');
+        $this->setFetchBodyCodeExpectation(500);
         $this->setFetchWorkExpectation();
-        $this->setSendResultsExpectation();
+        $this->setSendResultsExpectation(0);
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Bad response');
 
@@ -104,30 +107,30 @@ class RunLoopTest extends TestCase
             ->andReturn($this->getResponseMock());
     }
 
-    protected function setSendResultsExpectation()
+    protected function setSendResultsExpectation(int $times = 1)
     {
         $this
             ->getGuzzleMock()
             ->shouldReceive('post')
-            ->once()
+            ->times($times)
             ->with(
                 'http://localhost/2018-06-01/runtime/invocation/123/response',
                 ['body' => index('rah'),]
             );
     }
 
-    protected function setFetchInvocationIdExpectation($populated = true)
+    protected function setFetchInvocationIdExpectation(bool $populated = true, int $times = 1)
     {
         $result = $populated ? ['123'] : [];
         $this
             ->getResponseMock()
             ->shouldReceive('getHeader')
-            ->once()
+            ->times($times)
             ->with('Lambda-Runtime-Aws-Request-Id')
             ->andReturn($result );
     }
 
-    protected function setFetchBodyExpectation($body = null, $responseCode = 200)
+    protected function setFetchBodyExpectation($body = null)
     {
         if (is_null($body)) {
             $body = json_encode([
@@ -146,7 +149,13 @@ class RunLoopTest extends TestCase
             ->getResponseMock()
             ->shouldReceive('getBody')
             ->once()
-            ->andReturn($streamMock)
+            ->andReturn($streamMock);
+    }
+
+    protected function setFetchBodyCodeExpectation(int $responseCode = 200)
+    {
+        $this
+            ->getResponseMock()
             ->shouldReceive('getStatusCode')
             ->once()
             ->andReturn($responseCode);
