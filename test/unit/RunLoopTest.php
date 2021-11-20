@@ -34,15 +34,31 @@ class RunLoopTest extends TestCase
         $this->responseSendMock = $this->createResponseMock();
     }
 
-    public function testRunLoopOnce()
+    /**
+     * Any 200 codes for these operations are good
+     */
+    public function testRunLoopLowCodes()
+    {
+        $this->goodRun(200, 202);
+    }
+
+    /**
+     * Any 200 codes for these operations are good
+     */
+    public function testRunLoopHighCodes()
+    {
+        $this->goodRun(299, 299);
+    }
+
+    protected function goodRun($fetchResponseCode, $sendResponseCode)
     {
         $runLoop = $this->getRunLoopInstance('localhost', 'index');
         $this->setFetchInvocationIdExpectation();
         $this->setFetchBodyExpectation();
-        $this->setFetchBodyCodeExpectation();
+        $this->setFetchBodyCodeExpectation($fetchResponseCode);
         $this->setFetchWorkExpectation();
         $this->setSendResultsExpectation();
-        $this->setSendResultsCodeExpectation();
+        $this->setSendResultsCodeExpectation($sendResponseCode);
         $runLoop->runLoop();
         $this->assertTrue(true);
     }

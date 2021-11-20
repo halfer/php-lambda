@@ -85,7 +85,8 @@ class RunLoop
             ->get($this->getRuntimeBaseUrl() . '/next');
 
         // Check that we have a good response
-        if ($response->getStatusCode() !== 200) {
+        $code = $response->getStatusCode();
+        if ($code < 200 || $code >= 300) {
             throw new HttpFailure('HTTP error when fetching task');
         }
 
@@ -121,7 +122,8 @@ class RunLoop
                 $this->getRuntimeBaseUrl() . '/' . $invocationId . '/response',
                 ['body' => $response]
             );
-        if ($response->getStatusCode() !== 200) {
+        $code = $response->getStatusCode();
+        if ($code < 200 || $code >= 300) {
             throw new HttpFailure('HTTP error when sending task results');
         }
     }
