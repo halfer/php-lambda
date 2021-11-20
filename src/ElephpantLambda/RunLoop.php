@@ -25,6 +25,8 @@ class RunLoop
 
     /**
      * Runs an infinite processing loop (until the environment is shut down)
+     *
+     * @todo Should `checkTaskCallable` be offered by TaskLoader instead?
      */
     public function runLoop(): void
     {
