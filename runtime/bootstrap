@@ -7,6 +7,7 @@ require '/opt/vendor/autoload.php';
 use ElephpantLambda\Config\EnvReader;
 use ElephpantLambda\Config\Store as ConfigStore;
 use ElephpantLambda\TaskLoader;
+use ElephpantLambda\RunLoop;
 use GuzzleHttp\Client;
 
 // Read config from env vars
@@ -16,39 +17,9 @@ $runtimeHost = $config->getLambdaRuntimeApi();
 
 // Load the function specified by the CMD
 $loader = new TaskLoader($config->getTaskPath());
-$handlerFunction = $config->getTaskName();
-$loader->load($handlerFunction);
+$taskName = $config->getTaskName();
+$loader->load($taskName);
 
-// FIXME need to wire in the new loop here
-
-// This is the request processing loop. Barring unrecoverable failure, this loop runs until the environment shuts down.
-do {
-    // Ask the runtime API for a request to handle.
-    $request = getNextRequest($runtimeHost);
-
-    // Execute the desired function and obtain the response.
-    $response = $handlerFunction($request['payload']);
-
-    // Submit the response back to the runtime API.
-    sendResponse($runtimeHost, $request['invocationId'], $response);
-} while (true);
-
-function getNextRequest(string $runtimeHost): array
-{
-    $client = new Client();
-    $response = $client->get('http://' . $runtimeHost . '/2018-06-01/runtime/invocation/next');
-
-    return [
-        'invocationId' => $response->getHeader('Lambda-Runtime-Aws-Request-Id')[0],
-        'payload' => json_decode((string) $response->getBody(), true)
-    ];
-}
-
-function sendResponse(string $runtimeHost, $invocationId, string $response): void
-{
-    $client = new Client();
-    $client->post(
-        'http://' . $runtimeHost . '/2018-06-01/runtime/invocation/' . $invocationId . '/response',
-        ['body' => $response]
-    );
-}
+// Mediator loop
+$runLoop = new RunLoop(new Client(), $runtimeHost, $taskName);
+$runLoop->runLoop();
