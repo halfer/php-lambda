@@ -16,8 +16,8 @@ class RunLoop
      * @param string $taskName
      */
     public function __construct(protected GuzzleClient $client,
-                                protected string $runtimeHost,
-                                protected string $taskName)
+                                protected string       $runtimeHost,
+                                protected string       $taskName)
     {
     }
 
@@ -26,17 +26,47 @@ class RunLoop
      */
     public function runLoop(): void
     {
+        $handlerFunction = $this->getTaskName();
+        $this->checkTaskCallable($handlerFunction);
+
         do {
             // Ask the runtime API for a request to handle
             $request = $this->getNextRequest();
 
             // Execute the desired function and obtain the response
-            $handlerFunction = $this->getTaskName();
-            $response = $handlerFunction($request['payload']);
+            $response = $this->callTask($handlerFunction, $request['payload']);
 
             // Submit the response back to the runtime API
             $this->sendResponse($request['invocationId'], $response);
         } while ($this->infiniteLoop);
+    }
+
+    protected function checkTaskCallable(string $handlerFunction)
+    {
+        // FIXME use specific class
+        if (!is_callable($handlerFunction)) {
+            throw new \RuntimeException('Cannot find task function');
+        }
+    }
+
+    /**
+     * We don't want exceptions in the task to crash the loop
+     *
+     * @param string $handlerFunction
+     * @param $payload
+     * @return array|mixed
+     */
+    protected function callTask(string $handlerFunction, $payload)
+    {
+        try {
+            $response = $handlerFunction($payload);
+        } catch (\Exception $e) {
+            $response = [
+                'error' => $e->getMessage(),
+            ];
+        }
+
+        return $response;
     }
 
     /**
@@ -55,7 +85,7 @@ class RunLoop
             throw new \RuntimeException('Bad response');
         }
 
-        $payload = json_decode((string) $response->getBody(), true);
+        $payload = json_decode((string)$response->getBody(), true);
 
         // Verify the payload sent to AWS is in the expected format
         if (!is_array($payload)) {

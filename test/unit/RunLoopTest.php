@@ -44,7 +44,9 @@ class RunLoopTest extends TestCase
 
     public function testRunLoopFunctionNotInScope()
     {
-        $this->markTestIncomplete();
+        $runLoop = $this->getRunLoopInstance('localhost', 'helloFunc');
+        $this->expectException(RuntimeException::class);
+        $runLoop->runLoop();
     }
 
     public function testRunLoopMissingPayload()
@@ -82,7 +84,6 @@ class RunLoopTest extends TestCase
     {
         $runLoop = $this->getRunLoopInstance('localhost', 'index');
         $this->setFetchInvocationIdExpectation(false, 0);
-        //$this->setFetchBodyExpectation('');
         $this->setFetchBodyCodeExpectation(500);
         $this->setFetchWorkExpectation();
         $this->setSendResultsExpectation(0);
