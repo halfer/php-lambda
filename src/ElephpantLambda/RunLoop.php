@@ -2,6 +2,7 @@
 
 namespace ElephpantLambda;
 
+use ElephpantLambda\Exception\PayloadNotJson;
 use GuzzleHttp\Client as GuzzleClient;
 
 class RunLoop
@@ -46,10 +47,16 @@ class RunLoop
         $response = $this
             ->getClient()
             ->get($this->getRuntimeBaseUrl() . '/next');
+        $payload = json_decode((string) $response->getBody(), true);
+
+        // Verify the payload sent to AWS is in the expected format
+        if (!is_array($payload)) {
+            throw new PayloadNotJson('The payload is not JSON');
+        }
 
         return [
             'invocationId' => $response->getHeader('Lambda-Runtime-Aws-Request-Id')[0],
-            'payload' => json_decode((string) $response->getBody(), true)
+            'payload' => $payload,
         ];
     }
 
