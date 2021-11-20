@@ -3,6 +3,7 @@
 namespace ElephpantLambda;
 
 use ElephpantLambda\Exception\PayloadNotJson;
+use ElephpantLambda\Exception\MissingInvocationIdHeader;
 use GuzzleHttp\Client as GuzzleClient;
 
 class RunLoop
@@ -53,9 +54,14 @@ class RunLoop
         if (!is_array($payload)) {
             throw new PayloadNotJson('The payload is not JSON');
         }
+        // Verify that AWS has supplied an invocation ID
+        $ids = $response->getHeader('Lambda-Runtime-Aws-Request-Id');
+        if (!$ids) {
+            throw new MissingInvocationIdHeader('The invocation ID header is missing');
+        }
 
         return [
-            'invocationId' => $response->getHeader('Lambda-Runtime-Aws-Request-Id')[0],
+            'invocationId' => $ids[0],
             'payload' => $payload,
         ];
     }

@@ -3,6 +3,8 @@
 use PHPUnit\Framework\TestCase;
 use ElephpantLambda\RunLoop;
 use ElephpantLambda\Exception\PayloadNotJson as PayloadNotJsonException;
+use ElephpantLambda\Exception\MissingInvocationIdHeader
+    as MissingInvocationIdHeaderException;
 use GuzzleHttp\Client as GuzzleClient;
 use Psr\Http\Message\ResponseInterface;
 
@@ -61,7 +63,14 @@ class RunLoopTest extends TestCase
 
     public function testRunLoopMissingInvocationId()
     {
-        $this->markTestIncomplete();
+        $runLoop = $this->getRunLoopInstance('localhost', 'index');
+        $this->setFetchInvocationIdExpectation(false);
+        $this->setFetchBodyExpectation();
+        $this->setFetchWorkExpectation();
+        $this->setSendResultsExpectation();
+        $this->expectException(MissingInvocationIdHeaderException::class);
+
+        $runLoop->runLoop();
     }
 
     public function testGetRequestHttpFault()
@@ -96,14 +105,15 @@ class RunLoopTest extends TestCase
             );
     }
 
-    protected function setFetchInvocationIdExpectation()
+    protected function setFetchInvocationIdExpectation($populated = true)
     {
+        $result = $populated ? ['123'] : [];
         $this
             ->getResponseMock()
             ->shouldReceive('getHeader')
             ->once()
             ->with('Lambda-Runtime-Aws-Request-Id')
-            ->andReturn(['123']);
+            ->andReturn($result );
     }
 
     protected function setFetchBodyExpectation($body = null)
