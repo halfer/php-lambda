@@ -48,6 +48,13 @@ class RunLoop
         $response = $this
             ->getClient()
             ->get($this->getRuntimeBaseUrl() . '/next');
+
+        // Check that we have a good response
+        if ($response->getStatusCode() !== 200) {
+            // FIXME use specific class, add better error message
+            throw new \RuntimeException('Bad response');
+        }
+
         $payload = json_decode((string) $response->getBody(), true);
 
         // Verify the payload sent to AWS is in the expected format

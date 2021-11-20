@@ -8,6 +8,12 @@ use ElephpantLambda\Exception\MissingInvocationIdHeader
 use GuzzleHttp\Client as GuzzleClient;
 use Psr\Http\Message\ResponseInterface;
 
+// Here is our pretend lambda
+function index($data)
+{
+    return 'hello';
+}
+
 class RunLoopTest extends TestCase
 {
     protected GuzzleClient $guzzleMock;
@@ -24,12 +30,6 @@ class RunLoopTest extends TestCase
 
     public function testRunLoopOnce()
     {
-        // Here is our pretend lambda
-        function index($data)
-        {
-            return 'hello';
-        }
-
         $runLoop = $this->getRunLoopInstance('localhost', 'index');
         $this->setFetchInvocationIdExpectation();
         $this->setFetchBodyExpectation();
@@ -75,7 +75,15 @@ class RunLoopTest extends TestCase
 
     public function testGetRequestHttpFault()
     {
-        $this->markTestIncomplete();
+        $runLoop = $this->getRunLoopInstance('localhost', 'index');
+        $this->setFetchInvocationIdExpectation(false);
+        // FIXME this should fail, since getBody is not called
+        $this->setFetchBodyExpectation('', 500);
+        $this->setFetchWorkExpectation();
+        $this->setSendResultsExpectation();
+        $this->expectException(RuntimeException::class);
+
+        $runLoop->runLoop();
     }
 
     public function testSendResponseHttpFault()
@@ -116,7 +124,7 @@ class RunLoopTest extends TestCase
             ->andReturn($result );
     }
 
-    protected function setFetchBodyExpectation($body = null)
+    protected function setFetchBodyExpectation($body = null, $responseCode = 200)
     {
         if (is_null($body)) {
             $body = json_encode([
@@ -135,7 +143,10 @@ class RunLoopTest extends TestCase
             ->getResponseMock()
             ->shouldReceive('getBody')
             ->once()
-            ->andReturn($streamMock);
+            ->andReturn($streamMock)
+            ->shouldReceive('getStatusCode')
+            ->once()
+            ->andReturn($responseCode);
     }
 
     protected function getRunLoopInstance(string $runtimeHost, string $taskName): RunLoop
