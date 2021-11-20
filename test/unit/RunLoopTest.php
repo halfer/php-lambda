@@ -40,7 +40,37 @@ class RunLoopTest extends TestCase
             ->with('http://localhost/2018-06-01/runtime/invocation/next')
             ->willReturn($responseMock);
         $runLoop->runLoop();
-        $this->markTestIncomplete();
+    }
+
+    public function testRunLoopOnce()
+    {
+        function index($data) {
+            return 'hello';
+        }
+
+        $runLoop = $this->getRunLoopInstance('localhost', 'index');
+        $responseMock = $this
+            ->getResponseMock()
+            ->shouldReceive('getHeader')
+            ->once()
+            ->with('Lambda-Runtime-Aws-Request-Id')
+            ->andReturn(['123'])
+            ->shouldReceive('getBody')
+            ->once();
+        $this
+            ->getGuzzleMock()
+            ->shouldReceive('get')
+            ->once()
+            ->with('http://localhost/2018-06-01/runtime/invocation/next')
+            ->andReturn($responseMock->getMock())
+            ->shouldReceive('post')
+            ->once()
+            ->with(
+                'http://localhost/2018-06-01/runtime/invocation/123/response',
+                ['body' => index('rah'), ]
+            );
+        $runLoop->runLoop();
+        $this->assertTrue(true);
     }
 
     public function testRunLoopFunctionNotInScope()
@@ -76,14 +106,24 @@ class RunLoopTest extends TestCase
         return $runLoop;
     }
 
-    protected function createGuzzleMock(): GuzzleClient
+    protected function __createGuzzleMock(): GuzzleClient
     {
         return $this->createMock(GuzzleClient::class);
     }
 
-    protected function createResponseMock(): GuzzleHttp\Psr7\Response
+    protected function createGuzzleMock(): GuzzleClient
+    {
+        return \Mockery::mock(GuzzleClient::class);
+    }
+
+    protected function __createResponseMock(): GuzzleHttp\Psr7\Response
     {
         return $this->createMock(GuzzleHttp\Psr7\Response::class);
+    }
+
+    protected function createResponseMock(): GuzzleHttp\Psr7\Response
+    {
+        return \Mockery::mock(GuzzleHttp\Psr7\Response::class);
     }
 
     protected function getGuzzleMock(): GuzzleClient
