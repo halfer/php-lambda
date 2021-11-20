@@ -19,50 +19,22 @@ class RunLoopTest extends TestCase
         $this->responseMock = $this->createResponseMock();
     }
 
-    /**
-     * This test crashes due to a type clash - need to rethink
-     */
-    public function __testRunLoopOnce()
-    {
-        $runLoop = $this->getRunLoopInstance('localhost', 'index');
-        $responseMock = $this
-            ->getResponseMock()
-            ->expects($this->once())
-            ->method('getHeader')
-            ->with('Lambda-Runtime-Aws-Request-Id')
-            ->willReturn(['123']);
-        //echo 'Response mock type:' . get_class($responseMock) . "\n";
-
-        $this
-            ->getGuzzleMock()
-            ->expects($this->once())
-            ->method('get')
-            ->with('http://localhost/2018-06-01/runtime/invocation/next')
-            ->willReturn($responseMock);
-        $runLoop->runLoop();
-    }
-
     public function testRunLoopOnce()
     {
+        // Here is our pretend lambda
         function index($data) {
             return 'hello';
         }
 
         $runLoop = $this->getRunLoopInstance('localhost', 'index');
-        $responseMock = $this
-            ->getResponseMock()
-            ->shouldReceive('getHeader')
-            ->once()
-            ->with('Lambda-Runtime-Aws-Request-Id')
-            ->andReturn(['123'])
-            ->shouldReceive('getBody')
-            ->once();
+        $this->setFetchInvocationIdExpectation();
+        $this->setFetchBodyExpectation();
         $this
             ->getGuzzleMock()
             ->shouldReceive('get')
             ->once()
             ->with('http://localhost/2018-06-01/runtime/invocation/next')
-            ->andReturn($responseMock->getMock())
+            ->andReturn($this->getResponseMock())
             ->shouldReceive('post')
             ->once()
             ->with(
@@ -98,6 +70,24 @@ class RunLoopTest extends TestCase
         $this->markTestIncomplete();
     }
 
+    protected function setFetchInvocationIdExpectation()
+    {
+        $this
+            ->getResponseMock()
+            ->shouldReceive('getHeader')
+            ->once()
+            ->with('Lambda-Runtime-Aws-Request-Id')
+            ->andReturn(['123']);
+    }
+
+    protected function setFetchBodyExpectation()
+    {
+        $this
+            ->getResponseMock()
+            ->shouldReceive('getBody')
+            ->once();
+    }
+
     protected function getRunLoopInstance(string $runtimeHost, string $taskName): RunLoop
     {
         $runLoop = new RunLoop($this->getGuzzleMock(), $runtimeHost, $taskName);
@@ -106,19 +96,9 @@ class RunLoopTest extends TestCase
         return $runLoop;
     }
 
-    protected function __createGuzzleMock(): GuzzleClient
-    {
-        return $this->createMock(GuzzleClient::class);
-    }
-
     protected function createGuzzleMock(): GuzzleClient
     {
         return \Mockery::mock(GuzzleClient::class);
-    }
-
-    protected function __createResponseMock(): GuzzleHttp\Psr7\Response
-    {
-        return $this->createMock(GuzzleHttp\Psr7\Response::class);
     }
 
     protected function createResponseMock(): GuzzleHttp\Psr7\Response
