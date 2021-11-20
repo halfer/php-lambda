@@ -29,18 +29,8 @@ class RunLoopTest extends TestCase
         $runLoop = $this->getRunLoopInstance('localhost', 'index');
         $this->setFetchInvocationIdExpectation();
         $this->setFetchBodyExpectation();
-        $this
-            ->getGuzzleMock()
-            ->shouldReceive('get')
-            ->once()
-            ->with('http://localhost/2018-06-01/runtime/invocation/next')
-            ->andReturn($this->getResponseMock())
-            ->shouldReceive('post')
-            ->once()
-            ->with(
-                'http://localhost/2018-06-01/runtime/invocation/123/response',
-                ['body' => index('rah'), ]
-            );
+        $this->setFetchWorkExpectation();
+        $this->setSendResultsExpectation();
         $runLoop->runLoop();
         $this->assertTrue(true);
     }
@@ -68,6 +58,28 @@ class RunLoopTest extends TestCase
     public function testSendResponseHttpFault()
     {
         $this->markTestIncomplete();
+    }
+
+    protected function setFetchWorkExpectation()
+    {
+        $this
+            ->getGuzzleMock()
+            ->shouldReceive('get')
+            ->once()
+            ->with('http://localhost/2018-06-01/runtime/invocation/next')
+            ->andReturn($this->getResponseMock());
+    }
+
+    protected function setSendResultsExpectation()
+    {
+        $this
+            ->getGuzzleMock()
+            ->shouldReceive('post')
+            ->once()
+            ->with(
+                'http://localhost/2018-06-01/runtime/invocation/123/response',
+                ['body' => index('rah'), ]
+            );
     }
 
     protected function setFetchInvocationIdExpectation()
