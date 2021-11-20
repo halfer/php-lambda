@@ -21,7 +21,8 @@ class RunLoopTest extends TestCase
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
     protected GuzzleClient $guzzleMock;
-    protected ResponseInterface $responseMock;
+    protected ResponseInterface $responseFetchMock;
+    protected ResponseInterface $responseSendMock;
 
     /**
      * Called before every test
@@ -29,7 +30,8 @@ class RunLoopTest extends TestCase
     public function setUp(): void
     {
         $this->guzzleMock = $this->createGuzzleMock();
-        $this->responseMock = $this->createResponseMock();
+        $this->responseFetchMock = $this->createResponseMock();
+        $this->responseSendMock = $this->createResponseMock();
     }
 
     public function testRunLoopOnce()
@@ -40,6 +42,7 @@ class RunLoopTest extends TestCase
         $this->setFetchBodyCodeExpectation();
         $this->setFetchWorkExpectation();
         $this->setSendResultsExpectation();
+        $this->setSendResultsCodeExpectation();
         $runLoop->runLoop();
         $this->assertTrue(true);
     }
@@ -92,7 +95,17 @@ class RunLoopTest extends TestCase
 
     public function testSendResponseHttpFault()
     {
-        $this->markTestIncomplete();
+        $runLoop = $this->getRunLoopInstance('localhost', 'index');
+        $this->setFetchInvocationIdExpectation();
+        $this->setFetchBodyExpectation();
+        $this->setFetchBodyCodeExpectation();
+        $this->setFetchWorkExpectation();
+        $this->setSendResultsExpectation();
+        $this->setSendResultsCodeExpectation(404);
+        $this->expectException(HttpFailureException::class);
+        $this->expectExceptionMessage('HTTP error when sending task results');
+
+        $runLoop->runLoop();
     }
 
     protected function setFetchWorkExpectation()
@@ -102,7 +115,7 @@ class RunLoopTest extends TestCase
             ->shouldReceive('get')
             ->once()
             ->with('http://localhost/2018-06-01/runtime/invocation/next')
-            ->andReturn($this->getResponseMock());
+            ->andReturn($this->getResponseFetchMock());
     }
 
     protected function setSendResultsExpectation(int $times = 1)
@@ -114,14 +127,23 @@ class RunLoopTest extends TestCase
             ->with(
                 'http://localhost/2018-06-01/runtime/invocation/123/response',
                 ['body' => index('rah'),]
-            );
+            )
+            ->andReturn($this->getResponseSendMock());
+    }
+    protected function setSendResultsCodeExpectation(int $responseCode = 200)
+    {
+        $this
+            ->getResponseSendMock()
+            ->shouldReceive('getStatusCode')
+            ->once()
+            ->andReturn($responseCode);
     }
 
     protected function setFetchInvocationIdExpectation(bool $populated = true, int $times = 1)
     {
         $result = $populated ? ['123'] : [];
         $this
-            ->getResponseMock()
+            ->getResponseFetchMock()
             ->shouldReceive('getHeader')
             ->times($times)
             ->with('Lambda-Runtime-Aws-Request-Id')
@@ -143,7 +165,7 @@ class RunLoopTest extends TestCase
             ->andReturn($body);
 
         $this
-            ->getResponseMock()
+            ->getResponseFetchMock()
             ->shouldReceive('getBody')
             ->once()
             ->andReturn($streamMock);
@@ -152,7 +174,7 @@ class RunLoopTest extends TestCase
     protected function setFetchBodyCodeExpectation(int $responseCode = 200)
     {
         $this
-            ->getResponseMock()
+            ->getResponseFetchMock()
             ->shouldReceive('getStatusCode')
             ->once()
             ->andReturn($responseCode);
@@ -181,8 +203,13 @@ class RunLoopTest extends TestCase
         return $this->guzzleMock;
     }
 
-    protected function getResponseMock(): ResponseInterface
+    protected function getResponseFetchMock(): ResponseInterface
     {
-        return $this->responseMock;
+        return $this->responseFetchMock;
+    }
+
+    protected function getResponseSendMock(): ResponseInterface
+    {
+        return $this->responseSendMock;
     }
 }

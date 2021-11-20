@@ -113,12 +113,15 @@ class RunLoop
      */
     protected function sendResponse($invocationId, string $response): void
     {
-        $this
+        $response = $this
             ->getClient()
             ->post(
                 $this->getRuntimeBaseUrl() . '/' . $invocationId . '/response',
                 ['body' => $response]
             );
+        if ($response->getStatusCode() !== 200) {
+            throw new HttpFailure('HTTP error when sending task results');
+        }
     }
 
     /**
