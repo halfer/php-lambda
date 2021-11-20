@@ -19,6 +19,8 @@ $loader = new TaskLoader($config->getTaskPath());
 $handlerFunction = $config->getTaskName();
 $loader->load($handlerFunction);
 
+// FIXME need to wire in the new loop here
+
 // This is the request processing loop. Barring unrecoverable failure, this loop runs until the environment shuts down.
 do {
     // Ask the runtime API for a request to handle.
