@@ -16,6 +16,8 @@ function index($data)
 
 class RunLoopTest extends TestCase
 {
+    use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+
     protected GuzzleClient $guzzleMock;
     protected ResponseInterface $responseMock;
 
@@ -82,6 +84,7 @@ class RunLoopTest extends TestCase
         $this->setFetchWorkExpectation();
         $this->setSendResultsExpectation();
         $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Bad response');
 
         $runLoop->runLoop();
     }
