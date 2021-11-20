@@ -8,3 +8,4 @@ require_once $projectRoot . '/src/ElephpantLambda/TaskLoader.php';
 require_once $projectRoot . '/src/ElephpantLambda/RunLoop.php';
 require_once $projectRoot . '/src/ElephpantLambda/Exception/PayloadNotJson.php';
 require_once $projectRoot . '/src/ElephpantLambda/Exception/MissingInvocationIdHeader.php';
+require_once $projectRoot . '/src/ElephpantLambda/Exception/TaskNotCallable.php';

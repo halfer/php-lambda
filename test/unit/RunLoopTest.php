@@ -5,6 +5,7 @@ use ElephpantLambda\RunLoop;
 use ElephpantLambda\Exception\PayloadNotJson as PayloadNotJsonException;
 use ElephpantLambda\Exception\MissingInvocationIdHeader
     as MissingInvocationIdHeaderException;
+use ElephpantLambda\Exception\TaskNotCallable as TaskNotCallableException;
 use GuzzleHttp\Client as GuzzleClient;
 use Psr\Http\Message\ResponseInterface;
 
@@ -45,7 +46,7 @@ class RunLoopTest extends TestCase
     public function testRunLoopFunctionNotInScope()
     {
         $runLoop = $this->getRunLoopInstance('localhost', 'helloFunc');
-        $this->expectException(RuntimeException::class);
+        $this->expectException(TaskNotCallableException::class);
         $runLoop->runLoop();
     }
 

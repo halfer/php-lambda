@@ -4,6 +4,7 @@ namespace ElephpantLambda;
 
 use ElephpantLambda\Exception\PayloadNotJson;
 use ElephpantLambda\Exception\MissingInvocationIdHeader;
+use ElephpantLambda\Exception\TaskNotCallable;
 use GuzzleHttp\Client as GuzzleClient;
 
 class RunLoop
@@ -43,9 +44,8 @@ class RunLoop
 
     protected function checkTaskCallable(string $handlerFunction)
     {
-        // FIXME use specific class
         if (!is_callable($handlerFunction)) {
-            throw new \RuntimeException('Cannot find task function');
+            throw new TaskNotCallable('Cannot find task function');
         }
     }
 
