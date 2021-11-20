@@ -5,6 +5,7 @@ namespace ElephpantLambda;
 use ElephpantLambda\Exception\PayloadNotJson;
 use ElephpantLambda\Exception\MissingInvocationIdHeader;
 use ElephpantLambda\Exception\TaskNotCallable;
+use ElephpantLambda\Exception\HttpFailure;
 use GuzzleHttp\Client as GuzzleClient;
 
 class RunLoop
@@ -81,8 +82,7 @@ class RunLoop
 
         // Check that we have a good response
         if ($response->getStatusCode() !== 200) {
-            // FIXME use specific class, add better error message
-            throw new \RuntimeException('Bad response');
+            throw new HttpFailure('HTTP error when fetching task');
         }
 
         $payload = json_decode((string)$response->getBody(), true);

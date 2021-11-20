@@ -6,6 +6,7 @@ use ElephpantLambda\Exception\PayloadNotJson as PayloadNotJsonException;
 use ElephpantLambda\Exception\MissingInvocationIdHeader
     as MissingInvocationIdHeaderException;
 use ElephpantLambda\Exception\TaskNotCallable as TaskNotCallableException;
+use ElephpantLambda\Exception\HttpFailure as HttpFailureException;
 use GuzzleHttp\Client as GuzzleClient;
 use Psr\Http\Message\ResponseInterface;
 
@@ -88,8 +89,8 @@ class RunLoopTest extends TestCase
         $this->setFetchBodyCodeExpectation(500);
         $this->setFetchWorkExpectation();
         $this->setSendResultsExpectation(0);
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Bad response');
+        $this->expectException(HttpFailureException::class);
+        $this->expectExceptionMessage('HTTP error when fetching task');
 
         $runLoop->runLoop();
     }
