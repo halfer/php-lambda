@@ -4,7 +4,11 @@
 STARTDIR=`pwd`
 cd `dirname $0`/..
 
-docker run --entrypoint sh -v `pwd`:/project -it node-cdk
+# This command shares the on-host AWS config/auth with the container
+docker run --entrypoint sh \
+  -v `pwd`:/project \
+  -v ~/.aws:/root/.aws \
+  -it node-cdk
 
 # Go back to original dir
 cd $STARTDIR
