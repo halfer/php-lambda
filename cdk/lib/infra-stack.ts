@@ -16,9 +16,10 @@ export class InfraStack extends cdk.Stack {
     // * A VPC to connect between EFS & lambda
     // * A security group to poke a hole for NFS
     // * EventBridge cron
+    // * A lifecycle for ECR to stop old image stockpiling
 
     const repo = ecr.Repository.fromRepositoryArn(this, "DockerRegistry",
-        "arn:aws:ecr:region:111111111111:php-lambda/latest"
+        "arn:aws:ecr:eu-west-2:111111111111:repository/php-lambda"
     );
 
     const vpc = new ec2.Vpc(this, "LambdaVpc", {

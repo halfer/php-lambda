@@ -32,10 +32,10 @@ At the time of writing:
 * the PHP lambda is callable from the AWS dashboard
 * the lambda mediator code is unit-tested
 * the lambda can write to EFS
+* the CDK deployment completes but is not tested
 
 Here is what does not work:
 
-* The CDK deploy command currently fails, and needs some debugging
 * The CDK infra isn't yet complete
 * The lambda doesn't do anything useful
 * SQLite isn't yet in use
