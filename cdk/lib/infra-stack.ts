@@ -35,10 +35,5 @@ export class InfraStack extends cdk.Stack {
       securityGroups: [],
       //vpc: vpc
     });
-
-    // example resource
-    // const queue = new sqs.Queue(this, 'Src2Queue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
   }
 }
