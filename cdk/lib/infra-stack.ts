@@ -3,6 +3,7 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import * as ecr from "@aws-cdk/aws-ecr";
 import * as ec2 from "@aws-cdk/aws-ec2"
 import {Handler} from "@aws-cdk/aws-lambda";
+import * as fs from 'fs';
 
 export class InfraStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -18,8 +19,9 @@ export class InfraStack extends cdk.Stack {
     // * EventBridge cron
     // * A lifecycle for ECR to stop old image stockpiling
 
+    const account:string = fs.readFileSync('aws-account.txt', 'utf8').trim();
     const repo = ecr.Repository.fromRepositoryArn(this, "DockerRegistry",
-        "arn:aws:ecr:eu-west-2:111111111111:repository/php-lambda"
+        `arn:aws:ecr:eu-west-2:${account}:repository/php-lambda`
     );
 
     const vpc = new ec2.Vpc(this, "LambdaVpc", {

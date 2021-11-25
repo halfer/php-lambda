@@ -1,6 +1,8 @@
 Commands
 ===
 
+Put your AWS account ID in `aws-account.txt`.
+
 Test commands
 ---
 
