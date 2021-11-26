@@ -45,8 +45,7 @@ export class InfraStack extends cdk.Stack {
       runtime: lambda.Runtime.FROM_IMAGE,
       code: lambda.Code.fromEcrImage(repo),
       handler: Handler.FROM_IMAGE,
-      securityGroups: [],
-      //vpc: network,
+      vpc: network,
     });
   }
 }
