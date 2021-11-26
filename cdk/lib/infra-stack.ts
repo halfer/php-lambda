@@ -2,7 +2,7 @@ import * as cdk from '@aws-cdk/core';
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as ecr from "@aws-cdk/aws-ecr";
 import * as ec2 from "@aws-cdk/aws-ec2"
-//import * as efs from "@aws-cdk/aws-efs"
+import * as efs from "@aws-cdk/aws-efs"
 import {Handler} from "@aws-cdk/aws-lambda";
 import * as fs from 'fs';
 
@@ -36,15 +36,16 @@ export class InfraStack extends cdk.Stack {
     sg.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(2049));
     sg.addEgressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(2049));
 
-    // const fileSystem = new efs.FileSystem(this, "Efs", {
-    //   vpc: network,
-    //   encrypted: true,
-    // });
+    const fileSystem = new efs.FileSystem(this, "Efs", {
+      vpc: network,
+      encrypted: true,
+    });
 
     const func = new lambda.Function(this, "DockerFunction", {
       runtime: lambda.Runtime.FROM_IMAGE,
       code: lambda.Code.fromEcrImage(repo),
       handler: Handler.FROM_IMAGE,
+      securityGroups: [sg, ],
       vpc: network,
     });
   }
