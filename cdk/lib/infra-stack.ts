@@ -40,6 +40,10 @@ export class InfraStack extends cdk.Stack {
       vpc: network,
       encrypted: true,
     });
+    const accessPoint = fileSystem.addAccessPoint('AccessPoint', {
+      path: '/',
+      posixUser: { uid: '0', gid: '0', }
+    });
 
     const func = new lambda.Function(this, "DockerFunction", {
       runtime: lambda.Runtime.FROM_IMAGE,
@@ -47,6 +51,7 @@ export class InfraStack extends cdk.Stack {
       handler: Handler.FROM_IMAGE,
       securityGroups: [sg, ],
       vpc: network,
+      filesystem: lambda.FileSystem.fromEfsAccessPoint(accessPoint, '/mnt/lambda-disk'),
     });
   }
 }
