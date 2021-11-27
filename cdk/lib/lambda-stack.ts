@@ -6,7 +6,7 @@ import * as efs from "@aws-cdk/aws-efs"
 import {Handler} from "@aws-cdk/aws-lambda";
 import * as fs from 'fs';
 
-export class InfraStack extends cdk.Stack {
+export class LambdaStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
