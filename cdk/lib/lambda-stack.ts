@@ -13,7 +13,6 @@ export class LambdaStack extends cdk.Stack {
     // Still need to add:
     //
     // * EventBridge cron
-    // * A lifecycle for ECR to stop old image stockpiling
 
     const account:string = fs.readFileSync('aws-account.txt', 'utf8').trim();
     const repo = ecr.Repository.fromRepositoryArn(this, "DockerRegistry",
@@ -51,3 +50,4 @@ export class LambdaStack extends cdk.Stack {
     });
   }
 }
+
