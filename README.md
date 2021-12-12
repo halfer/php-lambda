@@ -50,3 +50,17 @@ Here is what does not work:
 * The CDK needs a cron
 
 However, I think there is enough code here for it to be interesting to readers.
+
+Warning on AWS costs
+---
+
+I was rather hoping this project was going to be inexpensive to run, but sadly it is not. It seems to
+attract these rates:
+
+* $0.05 per NAT Gateway Hour
+* $0.176 per GB-Mo for One Zone Storage in EU (London) (very trivial in this case)
+* $0.05 per GB Data Processed by NAT Gateways (very trivial in this case)
+
+When I set this up, it was charging $2.40 (USD) per day, which would result in a monthly bill of
+$72. This isn't nearly good enough - while there are other reasons to use lambdas, one might as well
+just set up a small VPS with any cloud provider.
